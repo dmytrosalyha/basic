@@ -8,6 +8,7 @@ use app\models\ExperimentSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\Results;
 
 /**
  * ExperimentController implements the CRUD actions for Experiment model.
@@ -49,7 +50,7 @@ class ExperimentController extends Controller
     public function actionView($id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findModelResults($id),
         ]);
     }
 
@@ -98,6 +99,8 @@ class ExperimentController extends Controller
      */
     public function actionDelete($id)
     {
+        Results::deleteAll('id_exp = :id_exp', [':id_exp' => $id]);
+        
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -113,6 +116,14 @@ class ExperimentController extends Controller
     protected function findModel($id)
     {
         if (($model = Experiment::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+    protected function findModelResults($id=35)
+    {
+        if (($model = Results::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
